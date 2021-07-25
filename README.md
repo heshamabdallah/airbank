@@ -18,7 +18,7 @@ npx prisma migrate dev --name init
 npx prisma migrate reset --force
 ```
 
-### Frontend setup
+## Frontend setup
 ```
 cd frontend
 yarn install
