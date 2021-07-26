@@ -66,4 +66,4 @@ app.get('/transactions/:id', async (req, res) => {
   }
 })
 
-app.listen(8081)
+app.listen(process.env.APP_PORT)
