@@ -10,6 +10,10 @@ const routes: Array<RouteRecordRaw> = [
     path: '/transactions/:id',
     name: 'transactions-view',
     component: () => import('@/views/TransactionsView.vue')
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    component: () => import('@/views/NotFound.vue')
   }
 ]
 
