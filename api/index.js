@@ -7,6 +7,12 @@ const prisma = new PrismaClient()
 
 app.use(cors())
 
+app.get('/', async (req, res) => {
+  res.json({
+    message: 'Welcome to Airbank API',
+  })
+})
+
 app.get('/transactions', async (req, res) => {
   let page = 1
   const limit = 25
