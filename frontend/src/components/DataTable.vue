@@ -89,7 +89,7 @@
               class="py-3 px-6 text-left"
             >
             <slot :name="`item.${column[fieldKey]}`" :item="item">
-              {{ item[column[fieldKey]] }}
+              {{ displayCellValue(item, column) }}
             </slot>
             </td>
           </tr>
@@ -118,6 +118,7 @@ import {
 interface IColumnPropType {
   title: string;
   field: string;
+  formatter?: (item: any) => any;
 }
 
 interface IDateBetween {
@@ -210,7 +211,7 @@ export default defineComponent({
     itemsPerPage: {
       default: 25,
       type: Number as PropType<number>,
-      validator: (value: any) => value >= 1
+      validator: (value: any): boolean => value >= 1
     },
     columns: {
       type: Array as PropType<Array<IColumnPropType>>,
@@ -235,10 +236,38 @@ export default defineComponent({
     },
   },
   methods: {
-    onItemRowEvent(event: IItemRowEvents, item: any, itemIndex: number) {
+    onItemRowEvent(event: IItemRowEvents, item: any, itemIndex: number): void {
       // @ts-ignore
       this.$emit(`item-${event}`, item, itemIndex)
-    }
+    },
+    displayCellValue(item: any, column: IColumnPropType): any {
+      let value = null;
+      if (column.formatter && column.formatter.constructor === Function) {
+        value = column.formatter(item);
+        // @ts-ignore
+      } else if (column[this.fieldKey]) {
+        // @ts-ignore
+        let keys = column[this.fieldKey].split(".");
+        let finalValue = item[keys.shift()];
+
+        if (finalValue && [Object, Array].includes(finalValue.constructor)) {
+          keys.forEach((key: string) => {
+            if (
+              finalValue &&
+              [Object, Array].includes(finalValue.constructor)
+            ) {
+              finalValue = finalValue[key];
+            } else {
+              finalValue = null;
+            }
+          });
+        }
+
+        value = finalValue;
+      }
+
+      return value;
+    },
   },
   computed: {
     countStatisticsText(): string {
